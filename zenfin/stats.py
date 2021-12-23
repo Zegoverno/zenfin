@@ -65,7 +65,7 @@ def exponential_stdev(returns, window=30, is_halflife=False):
 
 def autocorr_penalty(returns):
   """Metric to account for auto correlation"""
-  returns = u.clean(returns)
+  returns = utils.clean(returns)
   num = len(returns)
   coef = np.abs(np.corrcoef(returns[:-1], returns[1:])[0, 1])
   corr = [((num - x)/num) * coef ** x for x in range(1, num)]

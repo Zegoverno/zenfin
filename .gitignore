@@ -1,0 +1,5 @@
+__pycache__/*
+zenfin/__pycache__/*
+dist
+/build
+.replit

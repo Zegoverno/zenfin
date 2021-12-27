@@ -264,7 +264,6 @@ def risk_of_ruin(returns):
     (the likelihood of losing all one's investment capital)
     """
     wins = win_rate(returns)
-    if isinstance()
     return ((1 - wins) / (1 + wins)) ** len(returns)
 
 def tail_ratio(returns, cutoff=0.95):

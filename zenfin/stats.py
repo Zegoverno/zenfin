@@ -132,7 +132,14 @@ def rar(returns, rf=0., periods=252):
     (CAGR / exposure. takes time into account.)
     """
     excess_returns = utils.to_excess_returns(returns, rf, periods)
-    return cagr(excess_returns) / exposure(excess_returns)
+    cagr = stats.cagr(excess_returns)
+    ex = utils.exposure(excess_returns)
+    if isinstance(returns, pd.DataFrame):
+      results = {}
+      for c in returns:
+        results[c] = cagr[c] / ex[c]
+      return results
+    return cagr / ex
 
 def omega(returns, required_returns=0., periods=252):
     """
@@ -187,11 +194,6 @@ def consecutive_losses(returns, aggregate=None, compounded=True):
   """Returns the maximum consecutive losses by day/month/week/quarter/year"""
   returns = utils.aggregate_returns(returns, aggregate, compounded) < 0
   return utils.count_consecutive(returns).max()
-
-def exposure(returns):
-  """Returns the market exposure time (returns != 0)"""
-  ex = len(returns[(~np.isnan(returns)) & (returns != 0)]) / len(returns)
-  return ceil(ex * 100) / 100
 
 def win_rate(returns, aggregate=None, compounded=True):
   """Calculates the win ratio for a period"""

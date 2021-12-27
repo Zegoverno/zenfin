@@ -183,4 +183,15 @@ def remove_outliers(returns, quantile=.95):
   """Returns series of returns without the outliers"""
   return returns[returns < returns.quantile(quantile)]
 
+def exposure(returns):
+  """Returns the market exposure time (returns != 0)"""
+
+  if isinstance(returns, pd.DataFrame):
+      results = {}
+      for c in returns:
+        results[c] = ceil(100 * len(returns[c][(~np.isnan(returns[c])) & (returns[c] != 0)]) / len(returns[c])) / 100
+      return results
+
+  return ceil(100 * len(returns[(~np.isnan(returns)) & (returns != 0)]) / len(returns)) / 100
+
 # end

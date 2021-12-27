@@ -132,12 +132,12 @@ def rar(returns, rf=0., periods=252):
     (CAGR / exposure. takes time into account.)
     """
     excess_returns = utils.to_excess_returns(returns, rf, periods)
-    cagr = cagr(excess_returns)
-    ex = utils.exposure(excess_returns)
+    cagrs = cagr(excess_returns)
+    exs = utils.exposure(excess_returns)
     if isinstance(returns, pd.DataFrame):
       results = {}
       for c in returns:
-        results[c] = cagr[c] / ex[c]
+        results[c] = cagrs[c] / exs[c]
       return results
     return cagr / ex
 

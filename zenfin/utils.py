@@ -105,7 +105,7 @@ def rebase(prices, base=100):
   """rebase a series to a given initial base"""
   return prices / prices.iloc[0] * base
 
-def to_excess_return(returns, rf=0., periods=252):
+def to_excess_returns(returns, rf=0., periods=252):
   """Calculates excesss returns"""
   result = pd.DataFrame()
   if periods is not None:

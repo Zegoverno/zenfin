@@ -140,6 +140,17 @@ def omega(returns, required_returns=0., periods=252):
     See https://en.wikipedia.org/wiki/Omega_ratio for more details.
     """
     returns_less_thresh = utils.to_excess_returns(returns, required_returns, periods)
+    if isinstance(returns, pd.DataFrame):
+      result = {}
+      for c in returns.columns:
+        numer = returns_less_thresh[c][returns_less_thresh[c] > 0.0].sum()
+        denom = -1.0 * returns_less_thresh[c][returns_less_thresh[c] < 0.0].sum()
+        if denom > 0.0:
+          result[c] = numer / denom
+        else: 
+          result[c] = np.nan
+      return result
+      
     numer = returns_less_thresh[returns_less_thresh > 0.0].sum()
     denom = -1.0 * returns_less_thresh[returns_less_thresh < 0.0].sum()
     if denom > 0.0:

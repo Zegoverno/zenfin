@@ -108,12 +108,14 @@ def rebase(prices, base=100):
 
 def to_excess_returns(returns, rf=0., periods=252):
   """Calculates excesss returns"""
-  result = pd.DataFrame()
   if periods is not None:
     rf = np.power(1 + rf, 1./ periods)  -1.
-  for c in returns.columns:
-    result[c] = returns[c] - rf
-  return result
+  if isinstance(returns, pd.DataFrame):
+    result = pd.DataFrame()
+    for c in returns.columns:
+      result[c] = returns[c] - rf
+    return result
+  return returns - rf
 
 def group_returns(returns, groupby, compounded=True):
   """Summarize returns
@@ -161,6 +163,14 @@ def aggregate_returns(returns, period=None, compounded=True):
 
 def count_consecutive(data):
   """Counts consecutive data"""
+  if isinstance(data, pd.DataFrame):
+    results = pd.DataFrame()
+    for c in data:
+      results[c] = data[c] * (data[c].groupby((data[c] != data[c].shift(1)).cumsum()).cumcount() + 1)
+    return results
+
+  return data * (data.groupby((data != data.shift(1)).cumsum()).cumcount() + 1)
+
   return data * (data.groupby((data != data.shift(1)).cumsum()).cumcount() + 1)
 
 def to_drawdown_series(returns):

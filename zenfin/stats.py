@@ -265,10 +265,9 @@ def ulcer_performance_index(returns, rf=0):
     """
     Calculates the ulcer index score
     (downside risk measurment)
-    comp over exess return or comp of both rf and returns
-    seemed correct if rf is fixed
     """
-    return (total_return(returns)-rf) / ulcer_index(returns)
+    return total_return(utils.to_excess_returns(returns, rf)) / 
+ulcer_index(returns)
 
 def value_at_risk(returns, sigma=1, confidence=0.95):
   """
@@ -277,10 +276,6 @@ def value_at_risk(returns, sigma=1, confidence=0.95):
   """
   mu = returns.mean()
   sigma *= returns.std()
-
-  if confidence > 1:
-      confidence = confidence/100
-
   return norm.ppf(1-confidence, mu, sigma)
 
 def conditional_value_at_risk(returns, sigma=1, confidence=0.95):
@@ -288,9 +283,9 @@ def conditional_value_at_risk(returns, sigma=1, confidence=0.95):
     Calculats the conditional daily value-at-risk (aka expected shortfall)
     quantifies the amount of tail risk an investment
     """
-    var = value_at_risk(returns, sigma, confidence)
-    c_var = returns[returns < var].values.mean()
-    return c_var if ~np.isnan(c_var) else var
+    var = s.value_at_risk(returns, sigma, confidence)
+    c_var = returns[returns < var].mean()
+    return c_var
 
 def serenity_index(returns, rf=0):
   """
@@ -299,7 +294,7 @@ def serenity_index(returns, rf=0):
   """
   dd = utils.to_drawdown_series(returns)
   pitfall = - value_at_risk(dd) / returns.std()
-  return (total_return(returns)-rf) / (ulcer_index(returns) * pitfall)
+  return ulcer_performance_index(returns, rf) * pitfall)
 
 def risk_of_ruin(returns):
     """

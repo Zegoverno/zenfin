@@ -3,6 +3,7 @@ import calendar
 import pandas as pd
 import numpy as np
 from . import stats
+from math import ceil
 
 # """lorem"""
 

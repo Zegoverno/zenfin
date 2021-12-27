@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from math import ceil, sqrt
+from math import sqrt
 from scipy.stats import (norm, linregress )
 from . import utils
 

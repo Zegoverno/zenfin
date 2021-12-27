@@ -266,8 +266,7 @@ def ulcer_performance_index(returns, rf=0):
     Calculates the ulcer index score
     (downside risk measurment)
     """
-    return total_return(utils.to_excess_returns(returns, rf)) / 
-ulcer_index(returns)
+    return total_return(utils.to_excess_returns(returns, rf))/ ulcer_index(returns)
 
 def value_at_risk(returns, sigma=1, confidence=0.95):
   """

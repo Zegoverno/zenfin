@@ -131,38 +131,18 @@ def rar(returns, rf=0., periods=252):
     Calculates the risk-adjusted return of access returns
     (CAGR / exposure. takes time into account.)
     """
-    excess_returns = utils.to_excess_returns(returns, rf, periods)
-    cagrs = cagr(excess_returns)
-    exs = utils.exposure(excess_returns)
-    if isinstance(returns, pd.DataFrame):
-      results = {}
-      for c in returns:
-        results[c] = cagrs[c] / exs[c]
-      return results
-    return cagr / ex
+    excess_returns = u.to_excess_returns(returns, rf, periods)
+    return s.cagr(excess_returns) / exposure(excess_returns)
 
 def omega(returns, required_returns=0., periods=252):
     """
     Determines the Omega ratio of a strategy.
     See https://en.wikipedia.org/wiki/Omega_ratio for more details.
     """
-    returns_less_thresh = utils.to_excess_returns(returns, required_returns, periods)
-    if isinstance(returns, pd.DataFrame):
-      result = {}
-      for c in returns.columns:
-        numer = returns_less_thresh[c][returns_less_thresh[c] > 0.0].sum()
-        denom = -1.0 * returns_less_thresh[c][returns_less_thresh[c] < 0.0].sum()
-        if denom > 0.0:
-          result[c] = numer / denom
-        else: 
-          result[c] = np.nan
-      return result
-      
+    returns_less_thresh = u.to_excess_returns(returns, required_returns, periods)      
     numer = returns_less_thresh[returns_less_thresh > 0.0].sum()
-    denom = -1.0 * returns_less_thresh[returns_less_thresh < 0.0].sum()
-    if denom > 0.0:
-      return numer / denom
-    return np.nan
+    denom = returns_less_thresh[returns_less_thresh < 0.0].sum()
+    return numer / abs(denom)
 
 def gain_to_pain_ratio(returns, resolution="D", periods=252):
     """
@@ -199,12 +179,7 @@ def win_rate(returns, aggregate=None, compounded=True):
   """Calculates the win ratio for a period"""
   if aggregate:
     returns = u.aggregate_returns(returns, aggregate, compounded)
-  if isinstance(returns, pd.DataFrame):
-    results = {}
-    for c in returns:
-      results[c] = len(returns[c][returns[c] > 0]) / len(returns[c][returns[c] != 0]) 
-    return results
-  return len(returns[returns > 0]) / len(returns[returns != 0])
+  return returns[returns > 0].count() / returns[returns != 0].count()
 
 def avg_win(returns, aggregate=None, compounded=True):
   """
@@ -212,14 +187,8 @@ def avg_win(returns, aggregate=None, compounded=True):
   return/trade return for a period
   """
   if aggregate:
-    returns = utils.aggregate_returns(returns, aggregate, compounded)
-
-  if isinstance(returns, pd.DataFrame):
-    results = {}
-    for c in returns:
-      results[c] = returns[c][returns[c] > 0].dropna().mean()
-    return results
-  return returns[returns > 0].dropna().mean()
+    returns = u.aggregate_returns(returns, aggregate, compounded)
+  return returns[returns > 0].mean()
 
 def avg_loss(returns, aggregate=None, compounded=True):
   """
@@ -227,14 +196,8 @@ def avg_loss(returns, aggregate=None, compounded=True):
   return/trade return for a period
   """
   if aggregate:
-    returns = utils.aggregate_returns(returns, aggregate, compounded)
-
-  if isinstance(returns, pd.DataFrame):
-    results = {}
-    for c in returns:
-      results[c] = returns[c][returns[c] < 0].dropna().mean()
-    return results
-  return returns[returns < 0].dropna().mean()
+    returns = u.aggregate_returns(returns, aggregate, compounded)
+  return returns[returns < 0].mean()
 
 def skew(returns):
     """
@@ -301,6 +264,7 @@ def risk_of_ruin(returns):
     (the likelihood of losing all one's investment capital)
     """
     wins = win_rate(returns)
+    if isinstance()
     return ((1 - wins) / (1 + wins)) ** len(returns)
 
 def tail_ratio(returns, cutoff=0.95):

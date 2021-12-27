@@ -172,8 +172,6 @@ def count_consecutive(data):
 
   return data * (data.groupby((data != data.shift(1)).cumsum()).cumcount() + 1)
 
-  return data * (data.groupby((data != data.shift(1)).cumsum()).cumcount() + 1)
-
 def to_drawdown_series(returns):
     """Convert returns series to drawdown series"""
     prices = to_quotes(returns, 1)
@@ -188,12 +186,6 @@ def remove_outliers(returns, quantile=.95):
 def exposure(returns):
   """Returns the market exposure time (returns != 0)"""
 
-  if isinstance(returns, pd.DataFrame):
-      results = {}
-      for c in returns:
-        results[c] = ceil(100 * len(returns[c][(~np.isnan(returns[c])) & (returns[c] != 0)]) / len(returns[c])) / 100
-      return results
-
-  return ceil(100 * len(returns[(~np.isnan(returns)) & (returns != 0)]) / len(returns)) / 100
+  return 100 * returns[(returns != 0)].count() / returns.count() / 100
 
 # end

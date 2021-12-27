@@ -293,7 +293,7 @@ def serenity_index(returns, rf=0):
   """
   dd = utils.to_drawdown_series(returns)
   pitfall = - value_at_risk(dd) / returns.std()
-  return ulcer_performance_index(returns, rf) * pitfall)
+  return ulcer_performance_index(returns, rf) * pitfall
 
 def risk_of_ruin(returns):
     """

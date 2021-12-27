@@ -198,7 +198,12 @@ def consecutive_losses(returns, aggregate=None, compounded=True):
 def win_rate(returns, aggregate=None, compounded=True):
   """Calculates the win ratio for a period"""
   if aggregate:
-    returns = utils.aggregate_returns(returns, aggregate, compounded)
+    returns = u.aggregate_returns(returns, aggregate, compounded)
+  if isinstance(returns, pd.DataFrame):
+    results = {}
+    for c in returns:
+      results[c] = len(returns[c][returns[c] > 0]) / len(returns[c][returns[c] != 0]) 
+    return results
   return len(returns[returns > 0]) / len(returns[returns != 0])
 
 def avg_win(returns, aggregate=None, compounded=True):
@@ -208,15 +213,27 @@ def avg_win(returns, aggregate=None, compounded=True):
   """
   if aggregate:
     returns = utils.aggregate_returns(returns, aggregate, compounded)
+
+  if isinstance(returns, pd.DataFrame):
+    results = {}
+    for c in returns:
+      results[c] = returns[c][returns[c] > 0].dropna().mean()
+    return results
   return returns[returns > 0].dropna().mean()
 
-def avg_loss(returns, aggregate=None, compounded=True, prepare_returns=True):
+def avg_loss(returns, aggregate=None, compounded=True):
   """
   Calculates the average low if
   return/trade return for a period
   """
   if aggregate:
     returns = utils.aggregate_returns(returns, aggregate, compounded)
+
+  if isinstance(returns, pd.DataFrame):
+    results = {}
+    for c in returns:
+      results[c] = returns[c][returns[c] < 0].dropna().mean()
+    return results
   return returns[returns < 0].dropna().mean()
 
 def skew(returns):
@@ -239,11 +256,7 @@ def max_drawdown(returns):
     prices = utils.to_quotes(returns, 1)
     return (prices / prices.expanding(min_periods=0).max()).min() - 1
   
-def calmar(returns):
-    """Calculates the calmar ratio (CAGR% / MaxDD%)"""
-    cagr_ratio = cagr(returns)
-    max_dd = max_drawdown(returns)
-    return cagr_ratio / abs(max_dd)
+v
 
 def ulcer_index(returns):
     """Calculates the ulcer index score (downside risk measurment)"""

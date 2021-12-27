@@ -92,7 +92,7 @@ def to_returns(prices):
   """simple arithmetic returns from a price series"""
   return prices.pct_change()
 
-def to_log_return(returns, base='e'):
+def to_log_returns(returns, base='e'):
   """logarithm returns from a price series and base"""
   if base == '2':
     return np.log2(1+returns)
@@ -107,9 +107,12 @@ def rebase(prices, base=100):
 
 def to_excess_return(returns, rf=0., periods=252):
   """Calculates excesss returns"""
+  result = pd.DataFrame()
   if periods is not None:
     rf = np.power(1 + rf, 1./ periods)  -1.
-  return returns - rf
+  for c in returns.columns:
+    result[c] = returns[c] - rf
+  return result
 
 def group_returns(returns, groupby, compounded=True):
   """Summarize returns

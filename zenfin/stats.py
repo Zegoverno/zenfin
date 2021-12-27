@@ -65,7 +65,6 @@ def exponential_stdev(returns, window=30, is_halflife=False):
 
 def autocorr_penalty(returns):
   """Metric to account for auto correlation"""
-  returns = utils.clean(returns)
   num = len(returns)
   coef = np.abs(np.corrcoef(returns[:-1], returns[1:])[0, 1])
   corr = [((num - x)/num) * coef ** x for x in range(1, num)]
@@ -75,7 +74,7 @@ def sharpe(returns, rf, periods=252, annualize=True, smart=False):
   """
   Calculates the sharpe ratio of access returns
   """
-  excess_returns = utils.to_excess_return(returns, rf, periods)
+  excess_returns = utils.to_excess_returns(returns, rf, periods)
   divisor = excess_returns.std(ddof=1)
   if smart:
     # penalize sharpe with auto correlation
@@ -86,7 +85,7 @@ def sharpe(returns, rf, periods=252, annualize=True, smart=False):
   return res
 
 def rolling_sharpe(returns, rf, rolling_period=126, annualize=True, periods_per_year=252):
-  excess_returns = utils.to_excess_return(returns, rf, periods_per_year)
+  excess_returns = utils.to_excess_returns(returns, rf, periods_per_year)
   res = excess_returns.rolling(rolling_period).mean() / returns.rolling(rolling_period).std(ddof=1)
   if annualize:
       res = res * np.sqrt(periods_per_year)
@@ -100,7 +99,7 @@ def sortino(returns, rf, periods=252, annualize=True, smart=False):
   Calculation is based on this paper by Red Rock Capital
   http://www.redrockcapital.com/Sortino__A__Sharper__Ratio_Red_Rock_Capital.pdf
   """
-  excess_returns = utils.to_excess_return(returns, rf, periods)
+  excess_returns = utils.to_excess_returns(returns, rf, periods)
   downside = np.sqrt((excess_returns[excess_returns < 0] ** 2).sum() / len(excess_returns))
   if smart:
     # penalize sortino with auto correlation
@@ -111,7 +110,7 @@ def sortino(returns, rf, periods=252, annualize=True, smart=False):
   return res
 
 def rolling_sortino(returns, rf, rolling_period=126, annualize=True, periods_per_year=252 ):
-  excess_returns = utils.to_excess_return(returns, rf, periods_per_year)
+  excess_returns = utils.to_excess_returns(returns, rf, periods_per_year)
   downside = excess_returns.rolling(rolling_period).apply(lambda x: (x.values[x.values < 0]**2).sum()) / rolling_period
   res = excess_returns.rolling(rolling_period).mean() / np.sqrt(downside)
   if annualize:
@@ -132,7 +131,7 @@ def rar(returns, rf=0., periods=252):
     Calculates the risk-adjusted return of access returns
     (CAGR / exposure. takes time into account.)
     """
-    excess_returns = utils.to_excess_return(returns, rf, periods)
+    excess_returns = utils.to_excess_returns(returns, rf, periods)
     return cagr(excess_returns) / exposure(excess_returns)
 
 def omega(returns, required_returns=0., periods=252):
@@ -140,7 +139,7 @@ def omega(returns, required_returns=0., periods=252):
     Determines the Omega ratio of a strategy.
     See https://en.wikipedia.org/wiki/Omega_ratio for more details.
     """
-    returns_less_thresh = utils.to_excess_return(returns, required_returns, periods)
+    returns_less_thresh = utils.to_excess_returns(returns, required_returns, periods)
     numer = returns_less_thresh[returns_less_thresh > 0.0].sum()
     denom = -1.0 * returns_less_thresh[returns_less_thresh < 0.0].sum()
     if denom > 0.0:

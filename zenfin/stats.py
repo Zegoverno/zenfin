@@ -131,15 +131,15 @@ def rar(returns, rf=0., periods=252):
     Calculates the risk-adjusted return of access returns
     (CAGR / exposure. takes time into account.)
     """
-    excess_returns = u.to_excess_returns(returns, rf, periods)
-    return s.cagr(excess_returns) / exposure(excess_returns)
+    excess_returns = utils.to_excess_returns(returns, rf, periods)
+    return cagr(excess_returns) / utils.exposure(excess_returns)
 
 def omega(returns, required_returns=0., periods=252):
     """
     Determines the Omega ratio of a strategy.
     See https://en.wikipedia.org/wiki/Omega_ratio for more details.
     """
-    returns_less_thresh = u.to_excess_returns(returns, required_returns, periods)      
+    returns_less_thresh = utils.to_excess_returns(returns, required_returns, periods)      
     numer = returns_less_thresh[returns_less_thresh > 0.0].sum()
     denom = returns_less_thresh[returns_less_thresh < 0.0].sum()
     return numer / abs(denom)
@@ -178,7 +178,7 @@ def consecutive_losses(returns, aggregate=None, compounded=True):
 def win_rate(returns, aggregate=None, compounded=True):
   """Calculates the win ratio for a period"""
   if aggregate:
-    returns = u.aggregate_returns(returns, aggregate, compounded)
+    returns = utils.aggregate_returns(returns, aggregate, compounded)
   return returns[returns > 0].count() / returns[returns != 0].count()
 
 def avg_win(returns, aggregate=None, compounded=True):
@@ -187,7 +187,7 @@ def avg_win(returns, aggregate=None, compounded=True):
   return/trade return for a period
   """
   if aggregate:
-    returns = u.aggregate_returns(returns, aggregate, compounded)
+    returns = utils.aggregate_returns(returns, aggregate, compounded)
   return returns[returns > 0].mean()
 
 def avg_loss(returns, aggregate=None, compounded=True):
@@ -196,7 +196,7 @@ def avg_loss(returns, aggregate=None, compounded=True):
   return/trade return for a period
   """
   if aggregate:
-    returns = u.aggregate_returns(returns, aggregate, compounded)
+    returns = utils.aggregate_returns(returns, aggregate, compounded)
   return returns[returns < 0].mean()
 
 def skew(returns):
@@ -245,7 +245,7 @@ def conditional_value_at_risk(returns, sigma=1, confidence=0.95):
     Calculats the conditional daily value-at-risk (aka expected shortfall)
     quantifies the amount of tail risk an investment
     """
-    var = s.value_at_risk(returns, sigma, confidence)
+    var = value_at_risk(returns, sigma, confidence)
     c_var = returns[returns < var].mean()
     return c_var
 

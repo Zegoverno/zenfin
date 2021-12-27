@@ -177,7 +177,7 @@ def count_consecutive(data):
 def to_drawdown_series(returns):
     """Convert returns series to drawdown series"""
     prices = to_quotes(returns, 1)
-    prices = u.clean(prices)
+    prices = clean(prices)
     dd = prices / np.maximum.accumulate(prices) - 1.
     return dd.replace([np.inf, -np.inf, -0], 0)
 

@@ -256,8 +256,6 @@ def max_drawdown(returns):
     prices = utils.to_quotes(returns, 1)
     return (prices / prices.expanding(min_periods=0).max()).min() - 1
   
-v
-
 def ulcer_index(returns):
     """Calculates the ulcer index score (downside risk measurment)"""
     dd = utils.to_drawdown_series(returns)

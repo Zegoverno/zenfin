@@ -20,7 +20,7 @@ def expected_return(returns, aggregate=None, compounded=True):
   by calculating the geometric holding period return
   """
   returns = utils.aggregate_returns(returns, aggregate, compounded)
-  return np.product(1 + returns) ** (1 / len(returns)) - 1
+  return np.product(1 + returns) ** (1 / returns.count()) - 1
 
 def avg_return(returns, aggregate=None, compounded=True):
   """Calculates the average return/trade return for a period"""
@@ -264,7 +264,7 @@ def risk_of_ruin(returns):
     (the likelihood of losing all one's investment capital)
     """
     wins = win_rate(returns)
-    return ((1 - wins) / (1 + wins)) ** len(returns)
+    return ((1 - wins) / (1 + wins)) ** returns.count()
 
 def tail_ratio(returns, cutoff=0.95):
     """
@@ -283,10 +283,7 @@ def profit_ratio(returns):
     loss = returns[returns < 0]
     win_ratio = abs(wins.mean() / wins.count())
     loss_ratio = abs(loss.mean() / loss.count())
-    try:
-        return win_ratio / loss_ratio
-    except Exception:
-        return 0.
+    return win_ratio / loss_ratio
 
 def profit_factor(returns):
     """Measures the profit ratio (wins/loss)"""
@@ -342,26 +339,33 @@ def kelly_criterion(returns):
   return ((win_loss_ratio * win_prob) - lose_prob) / win_loss_ratio
 
 def r_squared(returns, benchmark):
-  """Measures the straight line fit of the equity curve"""
-  # slope, intercept, r_val, p_val, std_err = linregress()
-  _, _, r_val, _, _ = linregress(returns, benchmark)
-  return r_val**2
+  returns = u.clean(returns)
+  benchmark = u.clean(benchmark)
+  res = {}
+  for c in returns:
+    _, _, r_val, _, _ = linregress(returns[c], benchmark)
+    res[c] = r_val**2
+  return pd.DataFrame(res, index=[0])
 
-def information_ratio(returns, benchmark):
+def information_ratio(returns, benchmark, periods=1):
   """
   Calculates the information ratio
   (basically the risk return ratio of the net profits)
   """
-  diff_rets = returns - benchmark
-
-  return diff_rets.mean() / diff_rets.std()
+  
+  diff = utils.to_excess_returns(returns, benchmark, periods)
+  return diff.mean() / diff.std()
 
 def beta(returns, benchmark ):
   """Calculates beta of the portfolio"""
-
   # find covariance
-  matrix = np.cov(returns, benchmark)
-  return matrix[0, 1] / matrix[1, 1]
+  frames = [returns, benchmark]
+  df = pd.concat(frames, axis=1)
+  matrix = df.cov()
+  res = {}
+  for c in returns:
+    res[c] = matrix[c].iloc[-1]/ matrix.iloc[-1,-1]
+  return pd.DataFrame(res, index=[0])
 
 def alpha(returns, benchmark, periods=252):
   """Calculates alpha of the portfolio"""
@@ -375,18 +379,15 @@ def alpha(returns, benchmark, periods=252):
 
 def rolling_greeks(returns, benchmark, periods=252):
   """Calculates rolling alpha and beta of the portfolio"""
-  df = pd.DataFrame(data={
-    "returns": returns,
-    "benchmark": benchmark
-  })
+  frames = [returns, benchmark]
+  df = pd.concat(frames, axis=1)
+  df.columns = [*df.columns[:-1], 'benchmark']
   df = df.fillna(0)
-  corr = df.rolling(int(periods)).corr().unstack()['returns']['benchmark']
+  corr = df.rolling(int(periods)).corr().unstack()['benchmark'].drop('benchmark', axis=1)
   std = df.rolling(int(periods)).std()
-  beta = corr * std['returns'] / std['benchmark']
-
-  alpha = df['returns'].mean() - beta * df['benchmark'].mean()
-
-  return pd.DataFrame(index=returns.index, data={
-    "beta": beta,
-    "alpha": alpha
-  }).fillna(0)
+  beta = pd.DataFrame()
+  alpha = pd.DataFrame()
+  for c in returns:
+    beta[c] = corr[c] * std[c] / std['benchmark']
+    alpha[c] = df[c].mean() - beta[c] * df['benchmark'].mean()
+  return pd.concat([beta,alpha],axis=1,keys=['beta','alpha']).swaplevel(0,1,axis=1).sort_index(axis=1).fillna(0)

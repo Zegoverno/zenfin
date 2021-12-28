@@ -251,9 +251,13 @@ def value_at_risk(returns, sigma=1, confidence=0.95):
   Calculats the daily value-at-risk
   (variance-covariance calculation with confidence n)
   """
-  mu = returns.mean()
-  sigma *= returns.std()
-  return norm.ppf(1-confidence, mu, sigma)
+  res = {}
+  returns = utils.clean(returns)
+  for c in returns:
+    mu = returns[c].mean()
+    sigma = returns[c].std() 
+    res[c] = norm.ppf(1-confidence, mu, sigma)
+  return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
 def conditional_value_at_risk(returns, sigma=1, confidence=0.95):
     """

@@ -72,7 +72,7 @@ def std(df, date):
 
 def ytd(df, date):
   """year to date slice"""
-  log_1 = df.index >= date.strftime('%Y-%m-01')
+  log_1 = df.index >= date.strftime('%Y-01-01')
   log_2 = df.index <= date
   mask = np.logical_and(log_1, log_2)
   return df[mask]

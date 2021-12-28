@@ -148,6 +148,12 @@ def omega(returns, required_returns=0., periods=252):
     denom = returns_less_thresh[returns_less_thresh < 0.0].sum()
     return numer / abs(denom)
 
+def calmar(returns):
+    """Calculates the calmar ratio (CAGR% / MaxDD%)"""
+    cagr_ratio = stats.cagr(returns)
+    max_dd = stats.max_drawdown(returns)
+    return cagr_ratio / abs(max_dd)
+  
 def gain_to_pain_ratio(returns, resolution="D", periods=252):
     """
     Jack Schwager's GPR. See here for more info:

@@ -222,6 +222,11 @@ def max_drawdown(returns):
     ##can just get drawdown_series and take the minimun?
     prices = utils.to_quotes(returns, 1)
     return (prices / prices.expanding(min_periods=0).max()).min() - 1
+
+def longest_drawdown(returns):
+    """Calculates the maximum drawdown"""
+    dd = utils.to_drawdown_series(returns) < 0
+    return utils.count_consecutive(dd).max()
   
 def ulcer_index(returns):
     """Calculates the ulcer index score (downside risk measurment)"""

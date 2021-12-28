@@ -65,10 +65,14 @@ def exponential_stdev(returns, window=30, is_halflife=False):
 
 def autocorr_penalty(returns):
   """Metric to account for auto correlation"""
-  num = len(returns)
-  coef = np.abs(np.corrcoef(returns[:-1], returns[1:])[0, 1])
-  corr = [((num - x)/num) * coef ** x for x in range(1, num)]
-  return np.sqrt(1 + 2 * np.sum(corr))
+  res = {}
+  returns = utils.clean(returns)
+  for c in returns:
+    num = returns[c].count()
+    coef = np.abs(np.corrcoef(returns[c][:-1], returns[c][1:])[0, 1])
+    corr = [((num - x)/num) * coef ** x for x in range(1, num)]
+    res[c] = np.sqrt(1 + 2 * np.sum(corr))
+  return pd.DataFrame(res, index=[0])
 
 def sharpe(returns, rf, periods=252, annualize=True, smart=False):
   """

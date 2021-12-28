@@ -150,8 +150,8 @@ def omega(returns, required_returns=0., periods=252):
 
 def calmar(returns):
     """Calculates the calmar ratio (CAGR% / MaxDD%)"""
-    cagr_ratio = stats.cagr(returns)
-    max_dd = stats.max_drawdown(returns)
+    cagr_ratio = cagr(returns)
+    max_dd = max_drawdown(returns)
     return cagr_ratio / abs(max_dd)
   
 def gain_to_pain_ratio(returns, resolution="D", periods=252):

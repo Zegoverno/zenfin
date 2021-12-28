@@ -348,8 +348,8 @@ def kelly_criterion(returns):
   return ((win_loss_ratio * win_prob) - lose_prob) / win_loss_ratio
 
 def r_squared(returns, benchmark):
-  returns = u.clean(returns)
-  benchmark = u.clean(benchmark)
+  returns = utils.clean(returns)
+  benchmark = utils.clean(benchmark)
   res = {}
   for c in returns:
     _, _, r_val, _, _ = linregress(returns[c], benchmark)

@@ -72,7 +72,7 @@ def autocorr_penalty(returns):
     coef = np.abs(np.corrcoef(returns[c][:-1], returns[c][1:])[0, 1])
     corr = [((num - x)/num) * coef ** x for x in range(1, num)]
     res[c] = np.sqrt(1 + 2 * np.sum(corr))
-  return pd.DataFrame(res, index=[0])
+  return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
 def sharpe(returns, rf, periods=252, annualize=True, smart=False):
   """

@@ -20,7 +20,7 @@ def inc_month(date, inc):
   """increment date by some amount of months"""
   month = date.month - 1 + inc
   year = date.year + month // 12
-  month = date % 12 + 1
+  month = month % 12 + 1
   day = min(date.day, calendar.monthrange(year, month)[1])
   return dt.datetime(year, month, day)
 
@@ -49,7 +49,7 @@ def year_beg(date):
   """get first day of year from date given"""
   return dt.datetime(date.year, 1 , 1)
 
-def mtd(df, date):
+def mtd(df, date=None):
   """month to date slice"""
   log_1 = df.index >= month_beg(date)
   log_2 = df.index <= date
@@ -59,6 +59,13 @@ def mtd(df, date):
 def qtd(df, date):
   """quarter to date slice"""
   log_1 = df.index >= month_beg(inc_month(date, -((date.month -1 ) % 3)))
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def std(df, date):
+  """semester to date slice"""
+  log_1 = df.index >= month_beg(inc_month(date, -((date.month -1 ) % 6)))
   log_2 = df.index <= date
   mask = np.logical_and(log_1, log_2)
   return df[mask]

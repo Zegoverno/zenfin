@@ -352,9 +352,9 @@ def r_squared(returns, benchmark):
   benchmark = utils.clean(benchmark)
   res = {}
   for c in returns:
-    _, _, r_val, _, _ = linregress(returns[c], benchmark)
+    _, _, r_val, _, _ = linregress(returns[c], benchmark.squeeze(axis=1))
     res[c] = r_val**2
-  return pd.DataFrame(res, index=[0])
+  return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
 def information_ratio(returns, benchmark, periods=1):
   """

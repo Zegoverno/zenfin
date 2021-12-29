@@ -384,7 +384,7 @@ def beta(returns, benchmark ):
   res = {}
   for c in returns:
     res[c] = matrix[c].iloc[-1]/ matrix.iloc[-1,-1]
-  return pd.DataFrame(res, index=[0])
+  return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
 def alpha(returns, benchmark, periods=252):
   """Calculates alpha of the portfolio"""

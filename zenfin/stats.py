@@ -386,15 +386,16 @@ def beta(returns, benchmark ):
     res[c] = matrix[c].iloc[-1]/ matrix.iloc[-1,-1]
   return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
+
 def alpha(returns, benchmark, periods=252):
   """Calculates alpha of the portfolio"""
-
   # find beta
   _beta = beta(returns, benchmark)
-
   # calculates measures now
-  alpha = returns.mean() - _beta * benchmark.mean()
-  return alpha * periods
+  res = {}
+  for c in returns:
+    res[c] = (returns[c].mean() - _beta[c] * benchmark.mean().values[0] )* periods
+  return pd.DataFrame(res, index=[0]).squeeze(axis=0)
 
 def rolling_greeks(returns, benchmark, periods=252):
   """Calculates rolling alpha and beta of the portfolio"""

@@ -77,6 +77,48 @@ def ytd(df, date):
   mask = np.logical_and(log_1, log_2)
   return df[mask]
 
+def l3m(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_month(date, -3)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def l6m(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_month(date, -6)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def l1y(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_year(date, -1)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def l3y(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_year(date, -3)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def l5y(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_year(date, -5)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
+def l10y(df, date):
+  """year to date slice"""
+  log_1 = df.index >= inc_year(date, -10)
+  log_2 = df.index <= date
+  mask = np.logical_and(log_1, log_2)
+  return df[mask]
+
 # todo
 # 1. calendarios DU brasil DI/B3
 # 2. correct datas based on official callendar

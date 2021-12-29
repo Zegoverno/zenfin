@@ -167,6 +167,9 @@ def to_excess_returns(returns, rf=0., periods=252):
     return result
   return returns - rf
 
+def match_volatility(returns, benchmark): 
+  return (returns / returns.std()) * benchmark.std()
+  
 def group_returns(returns, groupby, compounded=True):
   """Summarize returns
   group_returns(df, df.index.year)

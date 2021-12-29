@@ -1,6 +1,7 @@
 import pandas as pd
 from . import utils
 from . import stats
+from . import plots
 from tabulate import tabulate
 
 def drawdown_details(drawdown):
@@ -85,7 +86,7 @@ def to_num (input, dec=1):
     dec = '{:,.1f}'
   return input.map(dec.format)
 
-def metrics (dr, bench, rf, periods=252):
+def metrics(dr, bench, rf, periods=252):
   rfd = rf['dR'].rename('DI')
   rfy = rf['yR'].rename('DI')
   frames = [dr, bench]
@@ -259,3 +260,34 @@ def metrics (dr, bench, rf, periods=252):
     print(tabulate(dd_details[c].sort_values(by='max drawdown', ascending=True)[:5], headers="keys", tablefmt='simple', showindex=False))
     print('\n')
   return None
+
+def zenplot(returns, benchmark, rf, grayscale=False, figsize=(8, 5)):
+  plots.plt_returns(returns, benchmark, rf,
+              grayscale=grayscale,
+              figsize=(figsize[0], figsize[0]*.6),
+              show=True,
+              ylabel=False)
+  plots.plt_log_returns(returns, benchmark, rf,
+              grayscale=grayscale,
+              figsize=(figsize[0], figsize[0]*.5),
+              show=True,
+              ylabel=False)
+  plots.plt_volmatch_returns(returns, benchmark, rf,
+              grayscale=grayscale,
+              figsize=(figsize[0], figsize[0]*.5),
+              show=True,
+              ylabel=False)
+  plots.plt_yearly_returns(returns, benchmark, rf,
+              grayscale=grayscale,
+              figsize=(figsize[0], figsize[0]*.5),
+              show=True,
+              ylabel=False)
+  # plots.plt_histogram()
+  # plots.plt_daily_returns()
+  # plots.plt_rolling_volatility()
+  # plots.plt_rolling_sharpe()
+  # plots.plt_rolling_sortino()
+  # plots.plt_drawdown_peridos()
+  # plots.plt_drawdown()
+  # plots.plt_mothly_heatmap()
+  # plots.plt_distributions()

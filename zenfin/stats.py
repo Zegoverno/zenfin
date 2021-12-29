@@ -232,7 +232,8 @@ def avg_drawdown(dd_details):
     """Calculates the maximum drawdown"""
     res = {}
     for c in dd_details.columns.get_level_values(0).unique():
-      res[c] = dd_details[c]['max drawdown'].mean()
+      res[c] = dd_details[c]['max drawdown'].mean() / 
+100
     return pd.DataFrame(res, index=[0]).squeeze(axis=0)
   
 def longest_drawdown_days(returns):

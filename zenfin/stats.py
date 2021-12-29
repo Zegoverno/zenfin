@@ -225,14 +225,25 @@ def kurtosis(returns):
 
 def max_drawdown(returns):
     """Calculates the maximum drawdown"""
-    ##can just get drawdown_series and take the minimun?
-    prices = utils.to_quotes(returns, 1)
-    return (prices / prices.expanding(min_periods=0).max()).min() - 1
+    dd = utils.to_drawdown_series(returns)
+    return dd.min()
 
-def longest_drawdown(returns):
+def avg_drawdown(dd_details):
+    """Calculates the maximum drawdown"""
+    res = {}
+    for c in dd_details.columns.get_level_values(0).unique():
+      res[c] = dd_details[c]['max drawdown'].mean()
+    return pd.DataFrame(res, index=[0]).squeeze(axis=0)
+  
+def longest_drawdown_days(returns):
     """Calculates the maximum drawdown"""
     dd = utils.to_drawdown_series(returns) < 0
     return utils.count_consecutive(dd).max()
+
+def avg_drawdown_days(returns):
+    """Calculates the maximum drawdown"""
+    dd = utils.to_drawdown_series(returns) < 0
+    return utils.count_consecutive(dd).mean()
   
 def ulcer_index(returns):
     """Calculates the ulcer index score (downside risk measurment)"""

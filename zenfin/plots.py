@@ -75,9 +75,9 @@ def plt_yearly_returns(returns, benchmark, rf,
                 subtitle=True,
                 savefig=None,
                 show=True):
-  returns = returns.resample('A').apply(stats.total_returns)
-  benchmark = benchmark.resample('A').apply(stats.total_returns)
-  rf = rf.resample('A').apply(stats.total_returns)
+  returns = returns.resample('A').apply(stats.total_return)
+  benchmark = benchmark.resample('A').apply(stats.total_return)
+  rf = rf.resample('A').apply(stats.total_return)
   fig = _plot.returns_bars(returns, benchmark, rf, title, ylabel=ylabel,hline=returns.mean(), hlw=hlw, hllabel=hllabel, hlcolor=hlcolor, figsize=figsize, fontname=fontname, grayscale=grayscale, subtitle=subtitle, savefig=savefig, show=show )
   if not show:
     return fig 

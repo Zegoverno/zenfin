@@ -24,6 +24,6 @@ __version__ = version.version
 __author__ = "José Governo"
 
 
-from . import stats, utils, 
+from . import stats, utils, reports
 
 __all__ = ['stats', 'reports', 'utils']

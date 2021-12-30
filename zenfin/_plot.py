@@ -450,8 +450,8 @@ def rolling_stats(returns, benchmark=None,
 
     if subtitle:
         ax.set_title("\n%s - %s                   " % (
-            df.index.date[:1][0].strftime('%e %b \'%y'),
-            df.index.date[-1:][0].strftime('%e %b \'%y')
+            returns.index.date[:1][0].strftime('%e %b \'%y'),
+            returns.index.date[-1:][0].strftime('%e %b \'%y')
         ), fontsize=12, color='gray')
 
     if hline:

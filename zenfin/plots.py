@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from . import stats, _plot, utils
+from . import stats, _plot, utils, reports
 
 def plt_returns(returns, benchmark, rf, 
                 title='Cumulative returns',

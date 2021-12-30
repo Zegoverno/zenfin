@@ -19,8 +19,8 @@ sns.set(font_scale=1.1, rc={
     'ytick.color': '#666666'
 })
 
-_FLATUI_COLORS = ["#fedd78", "#348dc1", "#af4b64",
-                  "#4fa487", "#9b59b6", "#808080"]
+_FLATUI_COLORS = [ "#348dc1", "#4fa487", "#af4b64",
+                  "#fedd78", "#9b59b6", "#808080"]
 _GRAYSCALE_COLORS = ['silver', '#222222', 'gray'] * 3
 
 def _get_colors(grayscale):
@@ -50,14 +50,24 @@ def format_pct_axis(x, _):
     res = '%1.0f%%' % x
     return res.replace('.0%', '%')
   
-def timeseries(returns, benchmark, rf,
+def timeseries(returns, benchmark=None, rf=0.,
                     title="Returns",
-                    fill=False, returns_label="Strategy",
-                    hline=None, hlw=None, hlcolor="red", hllabel="",
-                    percent=True, log_scale=False,
-                    lw=1.5, figsize=(10, 6), ylabel="",
-                    grayscale=False, fontname="Arial",
-                    subtitle=True, savefig=None, show=True):
+                    fill=False,
+                    returns_label="Strategy",
+                    hline=None,
+                    hlw=None,
+                    hlcolor="red",
+                    hllabel="",
+                    percent=True,
+                    log_scale=False,
+                    lw=1.5,
+                    figsize=(10, 6),
+                    ylabel="",
+                    grayscale=False,
+                    fontname="Arial",
+                    subtitle=True,
+                    savefig=None,
+                    show=True):
 
     colors, ls, alpha = _get_colors(grayscale)
 
@@ -81,21 +91,19 @@ def timeseries(returns, benchmark, rf,
     ax.set_facecolor('white')
 
     if isinstance(rf, pd.Series):
-      ax.plot(rf, lw=lw, ls=ls, label="Risk-Free", color=colors[1])
+      ax.plot(rf, lw=lw, ls=ls, label="Risk-Free", color=colors[2])
 
     if isinstance(benchmark, pd.Series):
-      ax.plot(benchmark, lw=lw, ls=ls, label="Benchmark", color=colors[2])
+      ax.plot(benchmark, lw=lw, ls=ls, label="Benchmark", color=colors[1])
 
     alpha = .25 if grayscale else 1
-    ax.plot(returns, lw=lw, label=returns_label, color=colors[3], alpha=alpha)
+    ax.plot(returns, lw=lw, label=returns_label, color=colors[0], alpha=alpha)
 
     if fill:
-        ax.fill_between(returns.index, 0, returns, color=colors[1], alpha=.25)
+        ax.fill_between(returns.index, 0, returns, color=colors[0], alpha=.25)
 
-    # rotate and align the tick labels so they look better
     fig.autofmt_xdate()
 
-    # use a more precise date string for the x axis locations in the toolbar
     ax.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
     if hline:
@@ -148,7 +156,7 @@ def timeseries(returns, benchmark, rf,
         return fig
 
     return None
-
+                      
 def returns_bars(returns, benchmark, rf,
                       title="Returns",
                       fill=False,

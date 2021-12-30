@@ -86,7 +86,7 @@ def to_num (input, dec=1):
     dec = '{:,.1f}'
   return input.map(dec.format)
 
-def metrics(dr, bench, rf, periods=252):
+def report_metrics(dr, bench, rf, periods=252):
   rfd = rf['dR'].rename('DI')
   rfy = rf['yR'].rename('DI')
   frames = [dr, bench]
@@ -261,7 +261,7 @@ def metrics(dr, bench, rf, periods=252):
     print('\n')
   return None
 
-def plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252):
+def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252):
   rfd=rf['dR']
   rfy=rf['yR']
   plots.plt_returns(returns, benchmark, rfd,

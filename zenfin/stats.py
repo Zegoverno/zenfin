@@ -422,3 +422,48 @@ def rolling_greeks(returns, benchmark, periods=252):
     beta[c] = corr[c] * std[c] / std['benchmark']
     alpha[c] = df[c].mean() - beta[c] * df['benchmark'].mean()
   return pd.concat([beta,alpha],axis=1,keys=['beta','alpha']).swaplevel(0,1,axis=1).sort_index(axis=1).fillna(0)
+
+
+def monthly_returns(returns, eoy=True):
+    """Calculates monthly returns"""
+    if isinstance(returns, pd.DataFrame):
+        returns = returns.copy()
+        returns.columns = map(str.lower, returns.columns)
+        if len(returns.columns) > 1 and 'close' in returns.columns:
+            returns = returns['close']
+        else:
+            returns = returns[returns.columns[0]]
+
+    original_returns = returns.copy()
+    returns = pd.DataFrame(
+        utils.group_returns(returns,
+                            returns.index.strftime('%Y-%m-01')))
+
+    returns.columns = ['Returns']
+    returns.index = pd.to_datetime(returns.index)
+
+    # get returnsframe
+    returns['Year'] = returns.index.strftime('%Y')
+    returns['Month'] = returns.index.strftime('%b')
+
+    # make pivot table
+    returns = returns.pivot('Year', 'Month', 'Returns').fillna(0)
+
+    # handle missing months
+    for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']:
+        if month not in returns.columns:
+            returns.loc[:, month] = 0
+
+    # order columns by month
+    returns = returns[['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']]
+
+    if eoy:
+        returns['eoy'] = utils.group_returns(
+            original_returns, original_returns.index.year).values
+
+    returns.columns = map(lambda x: str(x).upper(), returns.columns)
+    returns.index.name = None
+
+    return returns

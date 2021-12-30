@@ -264,40 +264,40 @@ def metrics(dr, bench, rf, periods=252):
 def plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252):
   rfd=rf['dR']
   rfy=rf['yR']
-  plt_returns(returns, benchmark, rfd,
+  plots.plt_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.6),
               show=True,
               ylabel=False)
-  plt_log_returns(returns, benchmark, rfd,
+  plots.plt_log_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
               show=True,
               ylabel=False)
-  plt_volmatch_returns(returns, benchmark, rfd,
+  plots.plt_volmatch_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
               show=True,
               ylabel=False)
-  plt_yearly_returns(returns, benchmark, rfd,
+  plots.plt_yearly_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
               show=True,
               ylabel=False)
   
-  plt_histogram(returns,
+  plots.plt_histogram(returns,
                 grayscale=grayscale,
                 figsize=(figsize[0], figsize[0]*.5),
                 show=True,
                 ylabel=False)
   
-  plt_daily_returns(returns,
+  plots.plt_daily_returns(returns,
                     grayscale=grayscale,
                     figsize=(figsize[0], figsize[0]*.3),
                     show=True,
                     ylabel=False)
   
-  plt_rolling_beta(returns, benchmark,
+  plots.plt_rolling_beta(returns, benchmark,
                    grayscale=grayscale,
                    window1=int(periods/2),
                    window2=periods,
@@ -305,46 +305,46 @@ def plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252):
                    show=True,
                    ylabel=False)
   
-  plt_rolling_volatility(returns, benchmark,
+  plots.plt_rolling_volatility(returns, benchmark,
                          grayscale=grayscale,
                          figsize=(figsize[0], figsize[0]*.3),
                          show=True,
                          ylabel=False,
                          period=int(periods/2))
   
-  plt_rolling_sharpe(returns, benchmark, rfy,
+  plots.plt_rolling_sharpe(returns, benchmark, rfy,
                      grayscale=grayscale,
                      figsize=(figsize[0], figsize[0]*.3),
                      show=True,
                      ylabel=False,
                      period=int(periods/2))
 
-  plt_rolling_sortino(returns, benchmark, rfy,
+  plots.plt_rolling_sortino(returns, benchmark, rfy,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.3),
                       show=True,
                       ylabel=False,
                       period=int(periods/2))
   
-  plt_drawdowns_periods(returns, periods=5,
+  plots.plt_drawdowns_periods(returns, periods=5,
                         grayscale=grayscale,
                         figsize=(figsize[0], figsize[0]*.5),
                         show=True,
                         ylabel=False)
 
-  plt_drawdown(returns,
+  plots.plt_drawdown(returns,
                grayscale=grayscale,
                figsize=(figsize[0], figsize[0]*.4),
                show=True,
                ylabel=False)
 
-  plt_monthly_heatmap(returns,
+  plots.plt_monthly_heatmap(returns,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.5),
                       show=True,
                       ylabel=False)
 
-  plt_distribution(returns,
+  plots.plt_distribution(returns,
                    grayscale=grayscale,
                    figsize=(figsize[0], figsize[0]*.5),
                    show=True, 

@@ -21,9 +21,9 @@ def plt_returns(returns, benchmark, rf,
                 subtitle=True,
                 savefig=None,
                 show=True):
-  returns = stats.rolling_returns(returns)
-  benchmark = stats.rolling_returns(benchmark)
-  rf = stats.rolling_returns(rf)
+  returns = utils.to_rolling_returns(returns)
+  benchmark = utils.to_rolling_returns(benchmark)
+  rf = utils.to_rolling_returns(rf)
   fig = _plot.timeseries(returns, benchmark, rf, title, ylabel=ylabel, lw=lw, figsize=figsize, fontname=fontname, grayscale=grayscale, subtitle=subtitle, savefig=savefig, show=show )
   if not show:
     return fig 
@@ -38,9 +38,9 @@ def plt_log_returns(returns, benchmark, rf,
                 subtitle=True,
                 savefig=None,
                 show=True):
-  returns = stats.rolling_returns(returns)
-  benchmark = stats.rolling_returns(benchmark)
-  rf = stats.rolling_returns(rf)
+  returns = utils.to_rolling_returns(returns)
+  benchmark = utils.to_rolling_returns(benchmark)
+  rf = utils.to_rolling_returns(rf)
   fig = _plot.timeseries(returns, benchmark, rf, title, log_scale=True, ylabel=ylabel, lw=lw, figsize=figsize, fontname=fontname, grayscale=grayscale, subtitle=subtitle, savefig=savefig, show=show )
   if not show:
     return fig
@@ -56,9 +56,9 @@ def plt_volmatch_returns(returns, benchmark, rf,
                 savefig=None,
                 show=True):
   returns = utils.match_volatility(returns, benchmark)
-  returns = stats.rolling_returns(returns)
-  benchmark = stats.rolling_returns(benchmark)
-  rf = stats.rolling_returns(rf)
+  returns = utils.to_rolling_returns(returns)
+  benchmark = utils.to_rolling_returns(benchmark)
+  rf = utils.to_rolling_returns(rf)
   fig = _plot.timeseries(returns, benchmark, rf, title, ylabel=ylabel, lw=lw, figsize=figsize, fontname=fontname, grayscale=grayscale, subtitle=subtitle, savefig=savefig, show=show )
   if not show:
     return fig 
@@ -276,7 +276,7 @@ def plt_drawdowns_periods(returns, periods=5,
     longest_dd = dddf.sort_values(
         by='days', ascending=False, kind='mergesort')[:periods]
 
-    returns = stats.rolling_returns(returns)
+    returns = utils.to_rolling_returns(returns)
 
     fig = _plot.longest_drawdowns(returns, longest_dd, periods,
                                  lw=lw,

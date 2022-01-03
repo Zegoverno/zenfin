@@ -6,10 +6,6 @@ from . import utils
 
 
 # portfolio statistics
-def rolling_returns(returns):
-  """calculates rolling compounded returns"""
-  return returns.add(1).cumprod() -1
-
 def total_return(returns):
   """calculates total compounded returns"""
   return returns.add(1).prod() -1

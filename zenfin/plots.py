@@ -272,7 +272,7 @@ def plt_drawdowns_periods(returns, periods=5,
 
 
     dd = utils.to_drawdown_series(returns)
-    dddf = reports.drawdown_details(dd)
+    dddf = utils.drawdown_details(dd)
     longest_dd = dddf.sort_values(
         by='days', ascending=False, kind='mergesort')[:periods]
 

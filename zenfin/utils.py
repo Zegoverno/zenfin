@@ -41,7 +41,7 @@ def drawdown_details(drawdown):
     data = []
     for i, _ in enumerate(starts):
         dd = drawdown[starts[i]:ends[i]]
-        clean_dd = -utils.remove_outliers(-dd, .99)
+        clean_dd = -remove_outliers(-dd, .99)
         data.append((starts[i], dd.idxmin(), ends[i],
                       (ends[i] - starts[i]).days,
                       dd.min() * 100, clean_dd.min() * 100))

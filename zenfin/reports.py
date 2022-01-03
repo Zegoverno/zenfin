@@ -10,7 +10,7 @@ def report_metrics(dr, bench, rf, periods=252):
   frames = [dr, bench]
   df = pd.concat(frames, axis=1)
   dd = utils.to_drawdown_series(df)
-  dd_details = drawdown_details(dd)
+  dd_details = utils.drawdown_details(dd)
   display = pd.DataFrame()
   print('[Analysis info]')
   date_start = dr.index.strftime('%Y-%m-%d')[0]

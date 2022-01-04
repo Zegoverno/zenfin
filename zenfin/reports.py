@@ -64,7 +64,7 @@ def report(returns, benchmark, rf,
     tpl = tpl.replace('{{firm}}', firm)
     tpl = tpl.replace('{{v}}', version)
 
-    mtrx = reports.report_metrics(returns, benchmark, rf,
+    mtrx = report_metrics(returns, benchmark, rf,
                           display=False,
                           periods=periods)
 
@@ -85,7 +85,7 @@ def report(returns, benchmark, rf,
     dd_info.columns = ['Started', 'Valley','Recovered', 'Drawdown', 'Days']
     tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, False))
 
-    figs = reports.report_plots(returns.iloc[:,0], benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
+    figs = report_plots(returns.iloc[:,0], benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
 
     tpl = tpl.replace('{{cum_returns}}', figs[0])
     tpl = tpl.replace('{{log_returns}}', figs[1])

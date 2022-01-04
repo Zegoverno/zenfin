@@ -125,6 +125,8 @@ def report_metrics(dr, bench, rf, periods=252, display=True):
   dsp_info = pd.DataFrame()
   date_start = dr.index.strftime('%Y-%m-%d')[0]
   date_end = dr.index.strftime('%Y-%m-%d')[-1]
+  dsp_info['Strategy'] = pd.Series(dr.columns[0])
+  dsp_info['Benchmark'] = pd.Series(bench.columns[0])
   dsp_info['Start Period'] = pd.Series(date_start)
   dsp_info['End Period'] = pd.Series(date_end)
   dsp_info['Working days'] = pd.Series(len(dr.index)) 

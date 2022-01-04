@@ -24,8 +24,8 @@ def _file_stream():
     """Returns a file stream"""
     return io.BytesIO()
   
-def _html_table(obj, showindex="default"):
-    obj = tabulate(obj.T, headers="keys", tablefmt='html',
+def _html_table(obj, showindex=True, headers="keys"):
+    obj = tabulate(obj.T, headers=headers, tablefmt='html',
                     floatfmt=".2f", showindex=showindex)
     obj = obj.replace(' style="text-align: right;"', '')
     obj = obj.replace(' style="text-align: left;"', '')
@@ -69,7 +69,7 @@ def report(returns, benchmark, rf,
                           display=False,
                           periods=periods)
 
-    tpl = tpl.replace('{{info}}', _html_table(mtrx[0]))
+    tpl = tpl.replace('{{info}}', _html_table(mtrx[0]), headers=False)
     tpl = tpl.replace('{{returns}}', _html_table(mtrx[1]))
     tpl = tpl.replace('{{performance}}', _html_table(mtrx[2]))
     tpl = tpl.replace('{{risk}}', _html_table(mtrx[3]))

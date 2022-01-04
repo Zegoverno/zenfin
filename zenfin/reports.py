@@ -87,7 +87,7 @@ def report(returns, benchmark, rf,
     # tpl = tpl.replace('{{dd_info}}', _html_table(dd_info, False))
 
     # plots
-    figs = report_plots(returns, benchmark, rf, grayscale=grayscale, periods=periods, display=False, save=True)
+    figs = report_plots(returnsiloc[:,0], benchmarkiloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
 
     tpl = tpl.replace('{{returns}}', figs[0])
     tpl = tpl.replace('{{log_returns}}', figs[1])

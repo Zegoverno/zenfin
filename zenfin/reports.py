@@ -54,7 +54,7 @@ def report(returns, benchmark, rf,
          template_path=None):
 
     tpl = ""
-    with open(template_path or path) as f:
+    with open(template_path or __file__[:-4] + '.html') as f:
         tpl = f.read()
         f.close()
 

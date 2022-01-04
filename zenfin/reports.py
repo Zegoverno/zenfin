@@ -8,7 +8,7 @@ import re as regex
 from base64 import b64encode
 
 def _download_html(html, filename="tearsheet.html"):
-    jscode = _regex.sub(' +', ' ', """<script>
+    jscode = regex.sub(' +', ' ', """<script>
     var bl=new Blob(['{{html}}'],{type:"text/html"});
     var a=document.createElement("a");
     a.href=URL.createObjectURL(bl);
@@ -33,7 +33,7 @@ def _html_table(obj, showindex="default"):
     obj = regex.sub(' +</td>', '</td>', obj)
     obj = regex.sub('<th> +', '<th>', obj)
     obj = regex.sub(' +</th>', '</th>', obj)
-    return 
+    return obj
 
 def _embed_figure(figfile, figfmt):
     figbytes = figfile.getvalue()
@@ -54,7 +54,7 @@ def report(returns, benchmark, rf,
          template_path=None):
 
     tpl = ""
-    with open(template_path or __file__[:-4] + '.html') as f:
+    with open(template_path or path) as f:
         tpl = f.read()
         f.close()
 
@@ -64,7 +64,7 @@ def report(returns, benchmark, rf,
     tpl = tpl.replace('{{firm}}', firm)
     tpl = tpl.replace('{{v}}', version)
 
-    mtrx = report_metrics(returns, benchmark, rf,
+    mtrx = reports.report_metrics(returns, benchmark, rf,
                           display=False,
                           periods=periods)
 
@@ -72,24 +72,22 @@ def report(returns, benchmark, rf,
     tpl = tpl.replace('{{returns}}', _html_table(mtrx[1]))
     tpl = tpl.replace('{{performance}}', _html_table(mtrx[2]))
     tpl = tpl.replace('{{risk}}', _html_table(mtrx[3]))
-    tpl = tpl.replace('{{pnl}}', _html_table(mtrx)[4])
+    tpl = tpl.replace('{{pnl}}', _html_table(mtrx[4]))
 
     tpl = tpl.replace('<tr><td></td><td></td><td></td></tr>',
                       '<tr><td colspan="3"><hr></td></tr>')
     tpl = tpl.replace('<tr><td></td><td></td></tr>',
                       '<tr><td colspan="2"><hr></td></tr>')
+    dd_info = mtrx[5][mtrx[5].columns.get_level_values(0).unique()[0]]
+    dd_info = dd_info.sort_values(
+        by='max drawdown', ascending=True)[:10]
+    dd_info = dd_info[['start', 'valley', 'end', 'max drawdown', 'days']]
+    dd_info.columns = ['Started', 'Valley','Recovered', 'Drawdown', 'Days']
+    tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, False))
 
-    # dd = _stats.to_drawdown_series(returns)
-    # dd_info = _stats.drawdown_details(dd).sort_values(
-    #     by='max drawdown', ascending=True)[:10]
-    # dd_info = dd_info[['start', 'end', 'max drawdown', 'days']]
-    # dd_info.columns = ['Started', 'Recovered', 'Drawdown', 'Days']
-    # tpl = tpl.replace('{{dd_info}}', _html_table(dd_info, False))
+    figs = reports.report_plots(returns.iloc[:,0], benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
 
-    # plots
-    figs = report_plots(returnsiloc[:,0], benchmarkiloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
-
-    tpl = tpl.replace('{{returns}}', figs[0])
+    tpl = tpl.replace('{{cum_returns}}', figs[0])
     tpl = tpl.replace('{{log_returns}}', figs[1])
     tpl = tpl.replace('{{vol_returns}}', figs[2])
     tpl = tpl.replace('{{eoy_returns}}', figs[3])
@@ -104,7 +102,7 @@ def report(returns, benchmark, rf,
     tpl = tpl.replace('{{monthly_heatmap}}', figs[12])
     tpl = tpl.replace('{{returns_dist}}', figs[13])
 
-    tpl = _regex.sub(r'\{\{(.*?)\}\}', '', tpl)
+    tpl = regex.sub(r'\{\{(.*?)\}\}', '', tpl)
     tpl = tpl.replace('white-space:pre;', '')
 
     if output is None:
@@ -309,6 +307,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.6),
               show=display,
+              savefig=savefig,
               ylabel=False)
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 

@@ -79,12 +79,14 @@ def report(returns, benchmark, rf,
                       '<tr><td colspan="3"><hr></td></tr>')
     tpl = tpl.replace('<tr><td></td><td></td></tr>',
                       '<tr><td colspan="2"><hr></td></tr>')
+
+           
     dd_info = mtrx[5][mtrx[5].columns.get_level_values(0).unique()[0]]
     dd_info = dd_info.sort_values(
         by='max drawdown', ascending=True)[:10]
     dd_info = dd_info[['start', 'valley', 'end', 'max drawdown', 'days']]
     dd_info.columns = ['Started', 'Valley','Recovered', 'Drawdown', 'Days']
-    tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, False))
+    tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, showindex=False))
 
     figs = report_plots(returns.iloc[:,0], benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
 

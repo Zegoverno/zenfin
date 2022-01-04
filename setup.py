@@ -44,6 +44,6 @@ setup(
     python_requires='>=3.6',
     include_package_data=True,
     package_data={
-        'static': 'zenfin/report.html*'
+        'static': [u'zenfin/report.html*']
     },
 )

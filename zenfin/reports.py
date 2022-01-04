@@ -69,7 +69,7 @@ def report(returns, benchmark, rf,
                           display=False,
                           periods=periods)
 
-    tpl = tpl.replace('{{info}}', _html_table(mtrx[0],headers=False))
+    tpl = tpl.replace('{{info}}', _html_table(mtrx[0],headers=['Analysis info']))
     tpl = tpl.replace('{{returns}}', _html_table(mtrx[1]))
     tpl = tpl.replace('{{performance}}', _html_table(mtrx[2]))
     tpl = tpl.replace('{{risk}}', _html_table(mtrx[3]))

@@ -43,4 +43,7 @@ setup(
     install_requirements=requirements,
     python_requires='>=3.6',
     include_package_data=True,
+    package_data={
+        'static': 'zenfin/report.html*'
+    },
 )

@@ -6,6 +6,7 @@ from tabulate import tabulate
 import io
 import re as regex
 from base64 import b64encode
+from datetime import date
 
 def _download_html(html, filename="tearsheet.html"):
     jscode = regex.sub(' +', ' ', """<script>
@@ -58,8 +59,8 @@ def report(returns, benchmark, rf,
         tpl = f.read()
         f.close()
 
-    date_range = returns.index.strftime('%e %b, %Y')
-    tpl = tpl.replace('{{date_range}}', date_range[0] + ' - ' + date_range[-1])
+    date_now = date.today().strftime('%e %b, %Y')
+    tpl = tpl.replace('{{date}}', date_now)
     tpl = tpl.replace('{{title}}', title)
     tpl = tpl.replace('{{firm}}', firm)
     tpl = tpl.replace('{{v}}', version)

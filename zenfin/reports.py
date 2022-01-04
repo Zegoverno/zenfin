@@ -3,7 +3,117 @@ from . import utils
 from . import stats
 from . import plots
 from tabulate import tabulate
+import io
+import re as regex
+from base64 import b64encode
 
+def _download_html(html, filename="tearsheet.html"):
+    jscode = _regex.sub(' +', ' ', """<script>
+    var bl=new Blob(['{{html}}'],{type:"text/html"});
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(bl);
+    a.download="{{filename}}";
+    a.hidden=true;document.body.appendChild(a);
+    a.innerHTML="download report";
+    a.click();</script>""".replace('\n', ''))
+    jscode = jscode.replace('{{html}}', _regex.sub(
+        ' +', ' ', html.replace('\n', '')))
+
+def _file_stream():
+    """Returns a file stream"""
+    return io.BytesIO()
+  
+def _html_table(obj, showindex="default"):
+    obj = tabulate(obj.T, headers="keys", tablefmt='html',
+                    floatfmt=".2f", showindex=showindex)
+    obj = obj.replace(' style="text-align: right;"', '')
+    obj = obj.replace(' style="text-align: left;"', '')
+    obj = obj.replace(' style="text-align: center;"', '')
+    obj = regex.sub('<td> +', '<td>', obj)
+    obj = regex.sub(' +</td>', '</td>', obj)
+    obj = regex.sub('<th> +', '<th>', obj)
+    obj = regex.sub(' +</th>', '</th>', obj)
+    return 
+
+def _embed_figure(figfile, figfmt):
+    figbytes = figfile.getvalue()
+    if figfmt == 'svg':
+        return figbytes.decode()
+    data_uri = b64encode(figbytes).decode()
+    return '<img src="data:image/{};base64,{}" />'.format(figfmt, data_uri)
+
+def report(returns, benchmark, rf,
+         grayscale=False,
+         title='Strategy Tearsheet',
+         output=None,
+         periods=252,
+         download_filename='tearsheet.html',
+         firm='Tera Capital',
+         version='0',
+         figfmt='svg',
+         template_path=None):
+
+    tpl = ""
+    with open(template_path or __file__[:-4] + '.html') as f:
+        tpl = f.read()
+        f.close()
+
+    date_range = returns.index.strftime('%e %b, %Y')
+    tpl = tpl.replace('{{date_range}}', date_range[0] + ' - ' + date_range[-1])
+    tpl = tpl.replace('{{title}}', title)
+    tpl = tpl.replace('{{firm}}', firm)
+    tpl = tpl.replace('{{v}}', version)
+
+    mtrx = report_metrics(returns, benchmark, rf,
+                          display=False,
+                          periods=periods)
+
+    tpl = tpl.replace('{{info}}', _html_table(mtrx[0]))
+    tpl = tpl.replace('{{returns}}', _html_table(mtrx[1]))
+    tpl = tpl.replace('{{performance}}', _html_table(mtrx[2]))
+    tpl = tpl.replace('{{risk}}', _html_table(mtrx[3]))
+    tpl = tpl.replace('{{pnl}}', _html_table(mtrx)[4])
+
+    tpl = tpl.replace('<tr><td></td><td></td><td></td></tr>',
+                      '<tr><td colspan="3"><hr></td></tr>')
+    tpl = tpl.replace('<tr><td></td><td></td></tr>',
+                      '<tr><td colspan="2"><hr></td></tr>')
+
+    # dd = _stats.to_drawdown_series(returns)
+    # dd_info = _stats.drawdown_details(dd).sort_values(
+    #     by='max drawdown', ascending=True)[:10]
+    # dd_info = dd_info[['start', 'end', 'max drawdown', 'days']]
+    # dd_info.columns = ['Started', 'Recovered', 'Drawdown', 'Days']
+    # tpl = tpl.replace('{{dd_info}}', _html_table(dd_info, False))
+
+    # plots
+    figs = report_plots(returns, benchmark, rf, grayscale=grayscale, periods=periods, display=False, save=True)
+
+    tpl = tpl.replace('{{returns}}', figs[0])
+    tpl = tpl.replace('{{log_returns}}', figs[1])
+    tpl = tpl.replace('{{vol_returns}}', figs[2])
+    tpl = tpl.replace('{{eoy_returns}}', figs[3])
+    tpl = tpl.replace('{{monthly_dist}}', figs[4])
+    tpl = tpl.replace('{{daily_returns}}', figs[5])
+    tpl = tpl.replace('{{rolling_beta}}', figs[6])
+    tpl = tpl.replace('{{rolling_vol}}', figs[7])
+    tpl = tpl.replace('{{rolling_sharpe}}', figs[8])
+    tpl = tpl.replace('{{rolling_sortino}}', figs[9])
+    tpl = tpl.replace('{{dd_periods}}', figs[10])
+    tpl = tpl.replace('{{dd_plot}}', figs[11])
+    tpl = tpl.replace('{{monthly_heatmap}}', figs[12])
+    tpl = tpl.replace('{{returns_dist}}', figs[13])
+
+    tpl = _regex.sub(r'\{\{(.*?)\}\}', '', tpl)
+    tpl = tpl.replace('white-space:pre;', '')
+
+    if output is None:
+        _download_html(tpl, download_filename)
+        return
+
+    with open(output, 'w', encoding='utf-8') as f:
+        f.write(tpl)
+      
 def report_metrics(dr, bench, rf, periods=252, display=True):
 
   rfd = rf['dR'].rename('DI')
@@ -189,91 +299,140 @@ def report_metrics(dr, bench, rf, periods=252, display=True):
 
   return dsp_info, dsp_returns, dsp_performance, dsp_risk, dsp_pnl, dd_details
 
-def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252):
+def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252, display=True, figfmt='svg', save=False):
   rfd=rf['dR']
   rfy=rf['yR']
+  
+  figs = []
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.6),
-              show=True,
+              show=display,
               ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_log_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
-              show=True,
+              show=display,
+              savefig=savefig,
               ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_volmatch_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
-              show=True,
+              show=display,
+              savefig=savefig,
               ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+  
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_yearly_returns(returns, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
-              show=True,
+              show=display,
+              savefig=savefig,
               ylabel=False)
-  
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_histogram(returns,
                 grayscale=grayscale,
                 figsize=(figsize[0], figsize[0]*.5),
-                show=True,
+                show=display,
+                savefig=savefig,
                 ylabel=False)
-  
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_daily_returns(returns,
                     grayscale=grayscale,
                     figsize=(figsize[0], figsize[0]*.3),
-                    show=True,
+                    show=display,
+                    savefig=savefig,
                     ylabel=False)
-  
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_rolling_beta(returns, benchmark,
                    grayscale=grayscale,
                    window1=int(periods/2),
                    window2=periods,
                    figsize=(figsize[0], figsize[0]*.3),
-                   show=True,
+                   show=display,
+                   savefig=savefig,
                    ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
   
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_rolling_volatility(returns, benchmark,
                          grayscale=grayscale,
                          figsize=(figsize[0], figsize[0]*.3),
-                         show=True,
+                         show=display,
+                         savefig=savefig,
                          ylabel=False,
                          period=int(periods/2))
-  
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_rolling_sharpe(returns, benchmark, rfy,
                      grayscale=grayscale,
                      figsize=(figsize[0], figsize[0]*.3),
-                     show=True,
+                     show=display,
+                     savefig=savefig,
                      ylabel=False,
                      period=int(periods/2))
-
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+  
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_rolling_sortino(returns, benchmark, rfy,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.3),
-                      show=True,
+                      show=display,
+                      savefig=savefig,
                       ylabel=False,
                       period=int(periods/2))
-  
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_drawdowns_periods(returns, periods=5,
                         grayscale=grayscale,
                         figsize=(figsize[0], figsize[0]*.5),
-                        show=True,
+                        show=display,
+                        savefig=savefig,
                         ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
 
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_drawdown(returns,
                grayscale=grayscale,
                figsize=(figsize[0], figsize[0]*.4),
-               show=True,
+               show=display,
+               savefig=savefig,
                ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
 
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_monthly_heatmap(returns,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.5),
-                      show=True,
+                      show=display,
+                      savefig=savefig,
                       ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
 
+  savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_distribution(returns,
                    grayscale=grayscale,
                    figsize=(figsize[0], figsize[0]*.5),
-                   show=True, 
+                   show=display,
+                   savefig=savefig,
                    ylabel=False)
+  figs.append(_embed_figure(figfile, figfmt)) if save else None
+
+  if save:
+    return figs

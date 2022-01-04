@@ -338,13 +338,13 @@ def plt_monthly_heatmap(returns,
 
     returns = stats.monthly_returns(returns, eoy=eoy) * 100
     fig = _plot.heatmap(returns,
-             title='Monthly Returns',
-             grayscale=False,
-             figsize=(10, 5),
-             fontname='Arial',
-             ylabel=False,
-             savefig=None,
-             show=True)
+             title=title,
+             grayscale=grayscale,
+             figsize=figsize,
+             fontname=fontname,
+             ylabel=ylabel,
+             savefig=savefig,
+             show=show)
     
     if not show:
         return fig

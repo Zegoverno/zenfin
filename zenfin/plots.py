@@ -207,9 +207,7 @@ def plt_rolling_sharpe(returns, benchmark=None, rf=0.,
                        show=True):
 
     returns = stats.rolling_sharpe(returns, rf, period, True, periods_per_year )
-
-    if benchmark is not None:
-        benchmark = stats.rolling_sharpe(benchmark, rf, period, True, periods_per_year)
+    benchmark = stats.rolling_sharpe(benchmark, rf, period, True, periods_per_year)
 
     fig = _plot.rolling_stats(returns, benchmark,
                             hline=returns.mean(),
@@ -240,9 +238,7 @@ def plt_rolling_sortino(returns, benchmark=None, rf=0.,
                        show=True):
 
     returns = stats.rolling_sortino(returns, rf, period, True, periods_per_year )
-
-    if benchmark is not None:
-        benchmark = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)
+    benchmark = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)
 
     fig = _plot.rolling_stats(returns, benchmark,
                             hline=returns.mean(),

@@ -303,9 +303,8 @@ def report_metrics(dr, bench, rf, periods=252, display=True):
   return dsp_info, dsp_returns, dsp_performance, dsp_risk, dsp_pnl, dd_details
 
 def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252, display=True, figfmt='svg', save=False):
-  rfd=rf['dR']
-  rfy=rf['yR']
-  
+  rfd = rf['dR'].rename('DI')
+  rfy = rf['yR'].rename('DI')
   figs = []
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_returns(returns, benchmark, rfd,

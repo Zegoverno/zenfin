@@ -101,7 +101,8 @@ def timeseries(returns, benchmark=None, rf=0.,
       ax.plot(returns, lw=lw, label=returns.name, color=colors[0], alpha=alpha)
 
     if isinstance(returns, pd.DataFrame):
-      ax.plot(returns, lw=lw, alpha=alpha)
+      for r in returns: 
+        ax.plot(returns[r], label=returns[r].name, lw=lw, alpha=alpha)
     
     if fill:
         ax.fill_between(returns.index, 0, returns, color=colors[0], alpha=.25)

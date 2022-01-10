@@ -305,6 +305,7 @@ def report_metrics(dr, bench, rf, periods=252, display=True):
 def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), periods=252, display=True, figfmt='svg', save=False):
   rfd = rf['dR'].rename('DI')
   rfy = rf['yR'].rename('DI')
+  ra = returns.iloc[:,0]
   figs = []
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
   plots.plt_returns(returns, benchmark, rfd,
@@ -334,7 +335,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
   
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_yearly_returns(returns, benchmark, rfd,
+  plots.plt_yearly_returns(ra, benchmark, rfd,
               grayscale=grayscale,
               figsize=(figsize[0], figsize[0]*.5),
               show=display,
@@ -343,7 +344,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_histogram(returns,
+  plots.plt_histogram(ra,
                 grayscale=grayscale,
                 figsize=(figsize[0], figsize[0]*.5),
                 show=display,
@@ -352,7 +353,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_daily_returns(returns,
+  plots.plt_daily_returns(ra,
                     grayscale=grayscale,
                     figsize=(figsize[0], figsize[0]*.3),
                     show=display,
@@ -361,7 +362,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_rolling_beta(returns, benchmark,
+  plots.plt_rolling_beta(ra, benchmark,
                    grayscale=grayscale,
                    window1=int(periods/2),
                    window2=periods,
@@ -372,7 +373,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
   
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_rolling_volatility(returns, benchmark,
+  plots.plt_rolling_volatility(ra, benchmark,
                          grayscale=grayscale,
                          figsize=(figsize[0], figsize[0]*.3),
                          show=display,
@@ -382,7 +383,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_rolling_sharpe(returns, benchmark, rfy,
+  plots.plt_rolling_sharpe(ra, benchmark, rfy,
                      grayscale=grayscale,
                      figsize=(figsize[0], figsize[0]*.3),
                      show=display,
@@ -392,7 +393,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
   
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_rolling_sortino(returns, benchmark, rfy,
+  plots.plt_rolling_sortino(ra, benchmark, rfy,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.3),
                       show=display,
@@ -402,7 +403,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_drawdowns_periods(returns, periods=5,
+  plots.plt_drawdowns_periods(ra, periods=5,
                         grayscale=grayscale,
                         figsize=(figsize[0], figsize[0]*.5),
                         show=display,
@@ -411,7 +412,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_drawdown(returns,
+  plots.plt_drawdown(ra,
                grayscale=grayscale,
                figsize=(figsize[0], figsize[0]*.4),
                show=display,
@@ -420,7 +421,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_monthly_heatmap(returns,
+  plots.plt_monthly_heatmap(ra,
                       grayscale=grayscale,
                       figsize=(figsize[0], figsize[0]*.5),
                       show=display,
@@ -429,7 +430,7 @@ def report_plots(returns, benchmark, rf, grayscale=False, figsize=(8, 5), period
   figs.append(_embed_figure(savefig['fname'], savefig['format'])) if save else None
 
   savefig = {'fname': _file_stream(), 'format': figfmt} if save else None
-  plots.plt_distribution(returns,
+  plots.plt_distribution(ra,
                    grayscale=grayscale,
                    figsize=(figsize[0], figsize[0]*.5),
                    show=display,

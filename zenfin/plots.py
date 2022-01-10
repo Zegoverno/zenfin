@@ -206,10 +206,11 @@ def plt_rolling_sharpe(returns, benchmark=None, rf=0.,
                        savefig=None,
                        show=True):
 
-    returns = stats.rolling_sharpe(returns, rf, period, True, periods_per_year )
-    benchmark = stats.rolling_sharpe(benchmark, rf, period, True, periods_per_year)
-
-    fig = _plot.rolling_stats(returns, benchmark,
+    returns_sharpe = stats.rolling_sharpe(returns, rf, period, True, periods_per_year )
+    returns_sharpe.name = returns.name
+    benchmark_sharpe = stats.rolling_sharpe(benchmark, rf, period, True, periods_per_year)
+    benchmark_sharpe.name = benchmark.name
+    fig = _plot.rolling_stats(returns_sharpe, benchmark_sharpe,
                             hline=returns.mean(),
                             hlw=1.5,
                             ylabel=ylabel,
@@ -237,10 +238,12 @@ def plt_rolling_sortino(returns, benchmark=None, rf=0.,
                        savefig=None,
                        show=True):
 
-    returns = stats.rolling_sortino(returns, rf, period, True, periods_per_year )
-    benchmark = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)
+    returns_sortino = stats.rolling_sortino(returns, rf, period, True, periods_per_year )
+    returns_sortino.name = returns.name
+    benchmark_sortino = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)\
+    benchmark_sortino.name = returns.name
 
-    fig = _plot.rolling_stats(returns, benchmark,
+    fig = _plot.rolling_stats(returns_sortino, benchmark_sortino,
                             hline=returns.mean(),
                             hlw=1.5,
                             ylabel=ylabel,

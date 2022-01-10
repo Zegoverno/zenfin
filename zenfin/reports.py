@@ -88,7 +88,7 @@ def report(returns, benchmark, rf,
     dd_info.columns = ['Started', 'Valley','Recovered', 'Drawdown', 'Days']
     tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, showindex=False))
 
-    figs = report_plots(returns.iloc[:,0], benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
+    figs = report_plots(returns, benchmark.iloc[:,0], rf, grayscale=grayscale, periods=periods, display=False, save=True)
 
     tpl = tpl.replace('{{cum_returns}}', figs[0])
     tpl = tpl.replace('{{log_returns}}', figs[1])

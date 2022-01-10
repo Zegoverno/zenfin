@@ -178,7 +178,7 @@ def returns_bars(returns, benchmark, rf,
                       show=True):
 
     df = pd.DataFrame(index=returns.index, data={returns.name: returns,
-                                                 benchmark.columns[0]: benchmark,
+                                                 benchmark.name: benchmark,
                                                  rf.name: rf
                                                  })
     colors, ls, alpha = _get_colors(grayscale)

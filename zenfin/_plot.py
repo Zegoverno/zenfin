@@ -91,14 +91,18 @@ def timeseries(returns, benchmark=None, rf=0.,
     ax.set_facecolor('white')
 
     if isinstance(rf, pd.Series):
-      ax.plot(rf, lw=lw, ls=ls, label="Risk-Free", color=colors[2])
+      ax.plot(rf, lw=lw, ls=ls, label=rf.name, color=colors[2])
 
     if isinstance(benchmark, pd.Series):
-      ax.plot(benchmark, lw=lw, ls=ls, label="Benchmark", color=colors[1])
+      ax.plot(benchmark, lw=lw, ls=ls, label=benchmark.name, color=colors[1])
 
     alpha = .25 if grayscale else 1
-    ax.plot(returns, lw=lw, label=returns_label, color=colors[0], alpha=alpha)
+    if isinstance(returns, pd.Series):
+      ax.plot(returns, lw=lw, label=returns.name, color=colors[0], alpha=alpha)
 
+    if isinstance(returns, pd.DataFrame):
+      ax.plot(returns, lw=lw, alpha=alpha)
+    
     if fill:
         ax.fill_between(returns.index, 0, returns, color=colors[0], alpha=.25)
 
@@ -172,9 +176,9 @@ def returns_bars(returns, benchmark, rf,
                       savefig=None,
                       show=True):
 
-    df = pd.DataFrame(index=returns.index, data={returns_label: returns,
-                                                 'Benchmark': benchmark,
-                                                 'Risk-free': rf
+    df = pd.DataFrame(index=returns.index, data={returns.name: returns,
+                                                 benchmark.name: benchmark,
+                                                 rf.name: rf
                                                  })
     colors, ls, alpha = _get_colors(grayscale)
 
@@ -447,9 +451,9 @@ def rolling_stats(returns, benchmark=None,
     ax.spines['left'].set_visible(False)
     
     if isinstance(benchmark, pd.Series):
-        ax.plot(benchmark, lw=lw, label="Benchmark", color=colors[1], alpha=.8)
+        ax.plot(benchmark, lw=lw, label=benchmark.name, color=colors[1], alpha=.8)
 
-    ax.plot(returns, lw=lw, label=returns_label, color=colors[0])
+    ax.plot(returns, lw=lw, label=returns.name, color=colors[0])
 
     fig.autofmt_xdate()
 

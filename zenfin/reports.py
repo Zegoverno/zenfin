@@ -17,7 +17,7 @@ def _download_html(html, filename="tearsheet.html"):
     a.hidden=true;document.body.appendChild(a);
     a.innerHTML="download report";
     a.click();</script>""".replace('\n', ''))
-    jscode = jscode.replace('{{html}}', _regex.sub(
+    jscode = jscode.replace('{{html}}', regex.sub(
         ' +', ' ', html.replace('\n', '')))
 
 def _file_stream():

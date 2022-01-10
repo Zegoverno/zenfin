@@ -240,8 +240,8 @@ def plt_rolling_sortino(returns, benchmark=None, rf=0.,
 
     returns_sortino = stats.rolling_sortino(returns, rf, period, True, periods_per_year )
     returns_sortino.name = returns.name
-    benchmark_sortino = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)\
-    benchmark_sortino.name = returns.name
+    benchmark_sortino = stats.rolling_sortino(benchmark, rf, period, True, periods_per_year)
+    benchmark_sortino.name = benchmark.name
 
     fig = _plot.rolling_stats(returns_sortino, benchmark_sortino,
                             hline=returns.mean(),

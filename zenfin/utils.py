@@ -51,8 +51,8 @@ def drawdown_details(drawdown):
                                 'max drawdown',
                                 '99% max drawdown'))
     df['days'] = df['days'].astype(int)
-    df['max drawdown'] = df['max drawdown'].astype(float)
-    df['99% max drawdown'] = df['99% max drawdown'].astype(float)
+    df['max drawdown'] = utils.to_pct(df['max drawdown'].astype(float),2)
+    df['99% max drawdown'] = utils.to_pct(df['99% max drawdown'].astype(float),2)
 
     df['start'] = df['start'].dt.strftime('%Y-%m-%d')
     df['end'] = df['end'].dt.strftime('%Y-%m-%d')

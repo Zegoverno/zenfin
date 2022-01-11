@@ -85,6 +85,7 @@ def report(returns, benchmark, rf,
     dd_info = dd_info.sort_values(
         by='max drawdown', ascending=True)[:10]
     dd_info = dd_info[['start', 'valley', 'end', 'max drawdown', 'days']]
+    dd_info['max drawdown'] = utils.to_pct(dd_info['max drawdown'],2)
     dd_info.columns = ['Started', 'Valley','Recovered', 'Drawdown', 'Days']
     tpl = tpl.replace('{{dd_info}}', _html_table(dd_info.T, showindex=False))
 

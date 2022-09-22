@@ -1,2 +1,7 @@
 run="pip install . && python"
 language="python3"
+
+[nix]
+
+[nix.channel]
+channel = "stable-22_05"

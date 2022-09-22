@@ -323,5 +323,4 @@ def exposure(returns):
   """Returns the market exposure time (returns != 0)"""
 
   return 100 * returns[(returns != 0)].count() / returns.count() / 100
-
 # end

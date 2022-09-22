@@ -43,6 +43,7 @@ def _embed_figure(figfile, figfmt):
     data_uri = b64encode(figbytes).decode()
     return '<img src="data:image/{};base64,{}" />'.format(figfmt, data_uri)
 
+
 def report(returns, benchmark, rf,
          grayscale=False,
          title='Strategy Tearsheet',

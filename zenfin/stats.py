@@ -4,12 +4,15 @@ from math import sqrt
 from scipy.stats import (norm, linregress )
 from . import utils
 
-
 # portfolio statistics
 def total_return(returns):
   """calculates total compounded returns"""
   return returns.add(1).prod() -1
 
+def tracking_errror(returns, benchmark):
+  error = returns-benchmark
+  return error.std()*100
+  
 def expected_return(returns, aggregate=None, compounded=True):
   """
   Returns the expected return for a given period
